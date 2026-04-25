@@ -48,19 +48,21 @@ if not convex_url:
 @st.cache_resource(show_spinner=False)
 def build_react(convex_url: str):
     env = {**os.environ, "VITE_CONVEX_URL": convex_url}
-    result = subprocess.run(
-        ["npm", "install"], cwd=str(ROOT), env=env,
-        capture_output=True, text=True
-    )
-    if result.returncode != 0:
-        return False, f"npm install failed:\n{result.stderr}"
+    npm = subprocess.run(["which", "npm"], capture_output=True, text=True).stdout.strip() or "npm"
 
     result = subprocess.run(
-        ["npm", "run", "build"], cwd=str(ROOT), env=env,
+        [npm, "install"], cwd=str(ROOT), env=env,
         capture_output=True, text=True
     )
     if result.returncode != 0:
-        return False, f"npm run build failed:\n{result.stderr}"
+        return False, f"npm install failed:\n{result.stdout}\n{result.stderr}"
+
+    result = subprocess.run(
+        [npm, "run", "build"], cwd=str(ROOT), env=env,
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        return False, f"npm run build failed:\n{result.stdout}\n{result.stderr}"
 
     return True, "Build successful"
 
