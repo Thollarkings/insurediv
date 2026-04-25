@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@theme {
+  --color-navy-900: #002147;
+  --color-navy-800: #003366;
+  --color-gold: #D4AF37;
+  --color-gold-light: #F4E0A1;
+  --font-family-sans: 'Inter', sans-serif;
+}
+
+:root {
+  background-color: #f8f9fa;
+  color: #1a1a1a;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.93);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.hero-animate {
+  animation: fadeIn 1.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
