@@ -32,7 +32,7 @@ const Contact = () => {
                             {[
                                 { icon: Mail, label: 'Email Us', value: 'concierge@divineinsure.com' },
                                 { icon: Phone, label: 'Call Us', value: '+1 (800) DIVINE-01' },
-                                { icon: MapPin, label: 'Visit Us', value: '777 Celestial Plaza, Sky District' },
+                                { icon: MapPin, label: 'Visit Us', value: 'Dangote Building, Tipper Garage, New Garage Ibadan' },
                             ].map(({ icon: Icon, label, value }) => (
                                 <div key={label} className="flex items-center gap-6">
                                     <div className="bg-[#002147] p-4 rounded-2xl">
