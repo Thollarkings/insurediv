@@ -11,28 +11,26 @@ export const listMessages = query({
 
         const messages = await ctx.db.query("messages").order("desc").take(50);
 
-        // Resolve author names for all messages
         const messagesWithNames = await Promise.all(
             messages.map(async (msg) => {
-                // Try to resolve name from staffUsers via authorEmail (new messages)
-                // or via author field matching staff name (old messages)
-                let staff = null;
-                if (msg.authorEmail) {
-                    staff = await ctx.db
-                        .query("staffUsers")
-                        .withIndex("by_email", (q) => q.eq("email", msg.authorEmail))
-                        .first();
-                } else if (msg.author) {
-                    // Old message: try to find staff by name
-                    staff = await ctx.db
-                        .query("staffUsers")
-                        .filter((q) => q.eq(q.field("name"), msg.author))
-                        .first();
+                let authorName = msg.author;
+                
+                // If author is missing or looks like an email, resolve it from staffUsers
+                if (!authorName || authorName.includes('@')) {
+                    if (msg.authorEmail) {
+                        const staff = await ctx.db
+                            .query("staffUsers")
+                            .withIndex("by_email", (q) => q.eq("email", msg.authorEmail))
+                            .first();
+                        if (staff) {
+                            authorName = staff.name;
+                        }
+                    }
                 }
-                const authorName = staff?.name || msg.author || "Unknown";
+                
                 return {
                     ...msg,
-                    author: authorName,
+                    author: authorName || "Unknown",
                 };
             })
         );
@@ -50,18 +48,16 @@ export const send = mutation({
         }
 
         const email = userIdentity.email ?? "";
+        // Use explicit name if available, otherwise derive from email
+        const fallbackName = userIdentity.name ?? email.split('@')[0] ?? "Staff";
 
         const staffUser = await ctx.db
             .query("staffUsers")
             .withIndex("by_email", (q) => q.eq("email", email))
             .first();
 
-        // Resolve author name (use || to treat empty strings as falsy)
-        const author =
-            staffUser?.name ||
-            userIdentity.name ||
-            email ||
-            "Unknown Staff";
+        // Prefer staffUsers name, fallback to identity-derived name
+        const author = staffUser?.name || fallbackName;
 
         await ctx.db.insert("messages", {
             body,

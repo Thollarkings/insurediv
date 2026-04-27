@@ -120,7 +120,8 @@ const Admin = () => {
     );
   }
 
-  const currentUserName = currentUser?.name ?? currentUser?.email ?? '';
+  // Match the exact format used in the backend to ensure correct bubble alignment
+  const currentUserName = currentUser?.name ?? currentUser?.email?.split('@')[0] ?? '';
 
   const handleSend = async (e) => {
     e.preventDefault();
