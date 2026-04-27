@@ -45,7 +45,7 @@ const Admin = () => {
   const handleSend = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-    await sendMessage({ body: newMessage });
+    await sendMessage({ body: newMessage, author: currentUserName });
     setNewMessage('');
   };
 
@@ -179,7 +179,7 @@ const Admin = () => {
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
                 {/* Author name displayed below the message */}
-                <span className="text-xs text-gray-500 font-bold mt-0.5 px-1">{msg.author}</span>
+                <span className="text-xs text-gray-500 font-bold mt-0.5 px-1">{msg.author ?? 'Unknown'}</span>
               </div>
             ))}
           </div>
