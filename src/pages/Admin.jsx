@@ -42,13 +42,6 @@ const Admin = () => {
     }
   };
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
-    await sendMessage({ body: newMessage, author: currentUserName });
-    setNewMessage('');
-  };
-
   const handleSignOut = async () => {
     await signOut();
   };
@@ -128,6 +121,14 @@ const Admin = () => {
   }
 
   const currentUserName = currentUser?.name ?? currentUser?.email ?? '';
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+    // Backend resolves author automatically from authenticated user identity
+    await sendMessage({ body: newMessage });
+    setNewMessage('');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12">
