@@ -1,33 +1,41 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+// ========== MESSAGE FUNCTIONS ==========
+
 export const listMessages = query({
     args: {},
     handler: async (ctx) => {
-        const userIdentity = await ctx.auth.getUserIdentity();
-        if (!userIdentity) {
-            return [];
-        }
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) return [];
 
         const messages = await ctx.db.query("messages").order("desc").take(50);
 
+        // Convex Auth password provider uses email as account ID (subject)
+        const currentUserEmail = (identity.email || identity.subject || "").toString();
+
+        // Resolve author names from staffUsers table using email
         const messagesWithNames = await Promise.all(
             messages.map(async (msg) => {
                 let authorName = msg.author;
-                
-                // If author is missing or looks like an email, resolve it from staffUsers
-                if (!authorName || authorName.includes('@')) {
-                    if (msg.authorEmail) {
+
+                // If author is "Unknown" or missing, try to resolve from staffUsers
+                if (!authorName || authorName === "Unknown") {
+                    const email = msg.authorEmail || currentUserEmail;
+                    if (email) {
                         const staff = await ctx.db
                             .query("staffUsers")
-                            .withIndex("by_email", (q) => q.eq("email", msg.authorEmail))
+                            .withIndex("by_email", (q: any) => q.eq("email", email))
                             .first();
                         if (staff) {
                             authorName = staff.name;
+                        } else {
+                            // Fallback to email prefix
+                            authorName = email.split('@')[0];
                         }
                     }
                 }
-                
+
                 return {
                     ...msg,
                     author: authorName || "Unknown",
@@ -42,26 +50,29 @@ export const listMessages = query({
 export const send = mutation({
     args: { body: v.string() },
     handler: async (ctx, { body }) => {
-        const userIdentity = await ctx.auth.getUserIdentity();
-        if (!userIdentity) {
-            throw new Error("Unauthorized");
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        // Convex Auth password provider uses email as account ID (subject)
+        const email = (identity.email || identity.subject || "").toString();
+
+        // Look up staff user by email (primary identifier)
+        let authorName = identity.name || email.split('@')[0] || "Unknown";
+
+        if (email) {
+            const staff = await ctx.db
+                .query("staffUsers")
+                .withIndex("by_email", (q: any) => q.eq("email", email))
+                .first();
+
+            if (staff) {
+                authorName = staff.name;
+            }
         }
-
-        const email = userIdentity.email ?? "";
-        // Use explicit name if available, otherwise derive from email
-        const fallbackName = userIdentity.name ?? email.split('@')[0] ?? "Staff";
-
-        const staffUser = await ctx.db
-            .query("staffUsers")
-            .withIndex("by_email", (q) => q.eq("email", email))
-            .first();
-
-        // Prefer staffUsers name, fallback to identity-derived name
-        const author = staffUser?.name || fallbackName;
 
         await ctx.db.insert("messages", {
             body,
-            author,
+            author: authorName,
             authorEmail: email,
             timestamp: Date.now(),
         });
@@ -71,10 +82,8 @@ export const send = mutation({
 export const clearMessages = mutation({
     args: {},
     handler: async (ctx) => {
-        const userIdentity = await ctx.auth.getUserIdentity();
-        if (!userIdentity) {
-            throw new Error("Unauthorized");
-        }
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
 
         const messages = await ctx.db.query("messages").collect();
         for (const msg of messages) {

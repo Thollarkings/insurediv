@@ -1,8 +1,8 @@
-# Divine Insure 🛡️
+# Top Notch Insurance Brokers 🛡️
 
 A modern, premium insurance company website prototype built with **React**, **Vite**, **Tailwind CSS v4**, and **Convex** for real-time backend functionality.
 
-![Divine Insure](./public/hero-bg.png)
+![Top Notch Insurance Brokers](./public/hero-bg.png)
 
 ---
 
@@ -73,6 +73,25 @@ VITE_CONVEX_URL=your_convex_deployment_url_here
 
 Your Convex URL is shown when you run `npx convex dev`.
 
+### Test Credentials
+
+A test admin account is available for development:
+
+- **Email:** enrol@topnotchib.com
+
+**Note:** Since Convex Password authentication requires users to create their own passwords, you'll need to sign up first by visiting `/admin` and entering this email with a new password. See [TEST_CREDENTIALS.md](TEST_CREDENTIALS.md) for detailed instructions.
+
+### Staff Enrollment
+
+To create staff accounts for the admin portal, access the Staff Enrollment page directly:
+
+1. Navigate directly to `/enroll` (not linked from the main site)
+2. Enter the enrollment code: `diven45-2026`
+3. Create staff accounts with name, email, and role (staff/admin)
+4. Staff can then log in at `/admin` using their credentials
+
+**Note:** The enrollment page is intentionally not linked from the main navigation and is only accessible via direct URL for security purposes.
+
 ---
 
 ## 📁 Project Structure
@@ -85,12 +104,16 @@ src/
 │   ├── Landing.jsx         # Home / hero page
 │   ├── About.jsx           # About us page
 │   ├── Contact.jsx         # Get a Quote / Contact form
-│   └── Admin.jsx           # Staff admin portal
+│   ├── Admin.jsx           # Staff admin portal
+│   └── Enroll.jsx          # Staff enrollment portal
 ├── App.jsx
 ├── main.jsx
 └── index.css               # Tailwind v4 + custom theme tokens
 
 convex/
+├── auth.js                 # ConvexAuth configuration
+├── schema.ts               # Database schema
+├── staff.ts                # Staff management functions
 ├── inquiries.ts            # Contact form submissions
 └── messages.ts             # Live staff chat messages
 
@@ -107,4 +130,4 @@ Licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
-> Built by [Thollarkings](https://github.com/Thollarkings) · Divine Insure © 2026
+> Built by [Thollarkings](https://github.com/Thollarkings) · Top Notch Insurance Brokers © 2026

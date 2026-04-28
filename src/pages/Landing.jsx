@@ -22,7 +22,7 @@ const Landing = () => {
                             <span className="text-gold">Future Self</span>
                         </h1>
                         <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
-                            Divine Insure provides premium protection for what matters most. Experience integrity, excellence, and peace of mind.
+                            Top Notch Insurance Brokers provides premium protection for what matters most. Experience integrity, excellence, and peace of mind.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <button className="bg-gold text-navy-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-white transition-all shadow-xl flex items-center gap-2">

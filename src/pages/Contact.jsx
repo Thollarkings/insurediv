@@ -30,8 +30,8 @@ const Contact = () => {
 
                         <div className="space-y-8">
                             {[
-                                { icon: Mail, label: 'Email Us', value: 'concierge@divineinsure.com' },
-                                { icon: Phone, label: 'Call Us', value: '+1 (800) DIVINE-01' },
+                                { icon: Mail, label: 'Email Us', value: 'concierge@topnotchib.com' },
+                                { icon: Phone, label: 'Call Us', value: '+1 (800) TOPNOTCH-01' },
                                 { icon: MapPin, label: 'Visit Us', value: 'Dangote Building, Tipper Garage, New Garage Ibadan' },
                             ].map(({ icon: Icon, label, value }) => (
                                 <div key={label} className="flex items-center gap-6">
@@ -52,7 +52,7 @@ const Contact = () => {
                             <div className="flex flex-col items-center justify-center h-full text-center py-20 space-y-4">
                                 <CheckCircle className="w-20 h-20 text-[#D4AF37]" />
                                 <h3 className="text-2xl font-bold text-[#002147]">Message Received!</h3>
-                                <p className="text-gray-500">A Divine Insure advisor will be in touch shortly.</p>
+                                <p className="text-gray-500">A Top Notch Insurance Brokers advisor will be in touch shortly.</p>
                                 <button onClick={() => setSubmitted(false)} className="mt-4 text-sm text-[#002147] underline">Send another message</button>
                             </div>
                         ) : (

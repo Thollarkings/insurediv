@@ -58,7 +58,7 @@ const About = () => {
                 <div className="absolute inset-0 z-0">
                     <img
                         src="/about-bg.png"
-                        alt="Divine Insure Executive Boardroom"
+                        alt="Top Notch Insurance Brokers Executive Boardroom"
                         className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-linear-to-r from-navy-900/85 via-navy-900/60 to-transparent" />
@@ -70,7 +70,7 @@ const About = () => {
                             Built on <span className="text-gold">Trust.</span><br />Driven by Purpose.
                         </h1>
                         <p className="text-xl text-gray-200 leading-relaxed">
-                            Divine Insure was born from a simple conviction: that everyone deserves world-class protection, delivered with dignity and care.
+                            Top Notch Insurance Brokers was born from a simple conviction: that everyone deserves world-class protection, delivered with dignity and care.
                         </p>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ const About = () => {
                                 A Legacy of Excellence, Redefined
                             </h2>
                             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                                Founded on the principles of trust and security, Divine Insure has grown from a visionary concept into a beacon of excellence in the insurance sector. We are redefining how protection is delivered in the digital age — blending cutting-edge technology with deeply human service.
+                                Founded on the principles of trust and security, Top Notch Insurance Brokers has grown from a visionary concept into a beacon of excellence in the insurance sector. We are redefining how protection is delivered in the digital age — blending cutting-edge technology with deeply human service.
                             </p>
                             <p className="text-gray-600 text-lg leading-relaxed mb-8">
                                 From humble beginnings to a national footprint, every step of our journey has been guided by one north star: the well-being of our clients. We don't just sell policies. We build lifelong partnerships rooted in genuine care.
@@ -117,13 +117,13 @@ const About = () => {
                         <div className="relative">
                             <div className="bg-navy-900 rounded-3xl p-10 text-white">
                                 <blockquote className="text-2xl font-light italic leading-relaxed text-gray-200 mb-8">
-                                    "To provide divine-level protection through innovation, integrity, and absolute commitment to our clients' future — today and for generations to come."
+                                    "To provide top-notch protection through innovation, integrity, and absolute commitment to our clients' future — today and for generations to come."
                                 </blockquote>
                                 <div className="flex items-center gap-4">
                                     <div className="w-14 h-14 rounded-full bg-gold flex items-center justify-center font-bold text-navy-900 text-lg">MO</div>
                                     <div>
                                         <p className="font-bold text-white">Mr Ojo</p>
-                                        <p className="text-gray-400 text-sm">Founder & CEO, Divine Insure</p>
+                                        <p className="text-gray-400 text-sm">Founder & CEO, Top Notch Insurance Brokers</p>
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +178,7 @@ const About = () => {
             {/* CTA */}
             <section className="py-20 bg-navy-900 text-white text-center">
                 <div className="max-w-3xl mx-auto px-4">
-                    <h2 className="text-4xl font-bold mb-4">Ready to Experience Divine Protection?</h2>
+                    <h2 className="text-4xl font-bold mb-4">Ready to Experience Top Notch Protection?</h2>
                     <p className="text-gray-300 text-lg mb-8">Let one of our expert advisors design a bespoke plan tailored to your life and legacy.</p>
                     <Link
                         to="/contact"

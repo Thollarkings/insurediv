@@ -1,51 +1,142 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lock, User, Send, ShieldCheck, LogOut, AlertCircle, Trash2 } from 'lucide-react';
-import { useQuery, useMutation } from 'convex/react';
-import { useAuthActions, useAuthToken } from '@convex-dev/auth/react';
-import { api } from '../../convex/_generated/api';
+
+const API_URL = 'http://localhost:3001/api';
 
 const Admin = () => {
-  const { signIn, signOut } = useAuthActions();
-  const token = useAuthToken();
-  const isAuthenticated = token !== null;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [messages, setMessages] = useState([]);
 
+  // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [error, setError] = useState('');
 
-  // Convex hooks (only active when logged in)
-  const currentUser = useQuery(api.staff.getCurrentUser, isAuthenticated ? {} : 'skip');
-  const messages = useQuery(api.messages.listMessages, isAuthenticated ? {} : 'skip') ?? [];
-  const sendMessage = useMutation(api.messages.send);
-  const clearMessages = useMutation(api.messages.clearMessages);
-  const ensureStaffUser = useMutation(api.staff.ensureStaffUser);
+  // Load user on mount / token change
+  useEffect(() => {
+    if (token) {
+      fetchCurrentUser();
+      fetchMessages();
+    }
+  }, [token]);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await fetch(`${API_URL}/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUser(data);
+        setIsAuthenticated(true);
+      } else {
+        logout();
+      }
+    } catch (err) {
+      setError('Failed to fetch user data');
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch(`${API_URL}/messages/list`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch messages', err);
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+
     if (!email.trim() || !password.trim()) {
       setError('Please enter both email and password.');
       return;
     }
+
     try {
-      // Try signIn first; if account doesn't exist, try signUp to create it
-      try {
-        await signIn('password', { email, password, flow: 'signIn' });
-      } catch (signInErr) {
-        await signIn('password', { email, password, flow: 'signUp' });
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Invalid email or password');
+        return;
       }
-      // Ensure a staffUsers record exists for this user
-      await ensureStaffUser({ name: email.split('@')[0] });
+
+      localStorage.setItem('token', data.token);
+      setToken(data.token);
+      setCurrentUser(data.user);
+      setIsAuthenticated(true);
+      setEmail('');
+      setPassword('');
     } catch (err) {
-      setError('Invalid email or password. Please check your credentials.');
+      setError('Login failed. Please try again.');
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken('');
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    setMessages([]);
+    setEmail('');
+    setPassword('');
+    setError('');
   };
 
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    try {
+      const res = await fetch(`${API_URL}/messages/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ body: newMessage })
+      });
+
+      if (res.ok) {
+        setNewMessage('');
+        fetchMessages();
+      }
+    } catch (err) {
+      console.error('Failed to send message', err);
+    }
+  };
+
+  const handleClearMessages = async () => {
+    try {
+      await fetch(`${API_URL}/messages/clear`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setMessages([]);
+    } catch (err) {
+      console.error('Failed to clear messages', err);
+    }
+  };
+
+  const currentUserName = currentUser?.name ?? 'Unknown';
+
+  // Unauthenticated view
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#002147] px-4">
@@ -53,7 +144,8 @@ const Admin = () => {
           <div className="text-center mb-10">
             <ShieldCheck className="w-16 h-16 text-[#D4AF37] mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-white mb-2">Staff Portal</h1>
-            <p className="text-gray-400">Secure entry for Divine Insure personnel</p>
+            <p className="text-gray-400">Secure entry for Top Notch Insurance Brokers personnel</p>
+            <p className="text-xs text-gray-500 mt-2">Restricted Area • Top Notch Security Protocols Active</p>
           </div>
 
           {error && (
@@ -71,9 +163,9 @@ const Admin = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); setError(''); }}
                   className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-xl text-white focus:ring-2 focus:ring-[#D4AF37] outline-none"
-                  placeholder="your@divineinsure.com"
+                  placeholder="your@topnotchib.com"
                   required
                 />
               </div>
@@ -85,7 +177,7 @@ const Admin = () => {
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setError(''); }}
                   className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-xl text-white focus:ring-2 focus:ring-[#D4AF37] outline-none"
                   placeholder="••••••••"
                   required
@@ -101,46 +193,24 @@ const Admin = () => {
           </form>
 
           <p className="text-center mt-8 text-gray-500 text-xs uppercase tracking-tighter">
-            Restricted Area • Divine Security Protocols Active
+            Restricted Area • Top Notch Security Protocols Active
           </p>
         </div>
       </div>
     );
   }
 
-  // Show loading while currentUser query resolves
-  if (currentUser === undefined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-24">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#002147] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading user data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Match the exact format used in the backend to ensure correct bubble alignment
-  const currentUserName = currentUser?.name ?? currentUser?.email?.split('@')[0] ?? '';
-
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
-    // Backend resolves author automatically from authenticated user identity
-    await sendMessage({ body: newMessage });
-    setNewMessage('');
-  };
-
+  // Authenticated view - Chat interface
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-12">
           <div>
             <h1 className="text-4xl font-bold text-[#002147]">Behind the Scenes</h1>
-            <p className="text-gray-500">Signed in as <strong>{currentUser?.name ?? currentUser?.email ?? ''}</strong></p>
+            <p className="text-gray-500">Signed in as <strong>{currentUser?.name ?? currentUser?.email ?? 'Unknown'}</strong></p>
           </div>
           <button
-            onClick={handleSignOut}
+            onClick={logout}
             className="flex items-center gap-2 text-[#002147] font-bold hover:text-[#D4AF37] transition-colors"
           >
             <LogOut className="w-4 h-4" /> Logout
@@ -151,9 +221,9 @@ const Admin = () => {
           {/* Header */}
           <div className="p-6 border-b bg-[#002147] text-white flex items-center gap-3">
             <ShieldCheck className="w-5 h-5 text-[#D4AF37]" />
-            <h4 className="font-bold">Divine-Chat — Secure Staff Channel</h4>
+            <h4 className="font-bold">Top Notch-Chat — Secure Staff Channel</h4>
             <button
-              onClick={() => clearMessages()}
+              onClick={handleClearMessages}
               className="ml-auto mr-3 flex items-center gap-1.5 text-xs text-red-300 hover:text-red-200 transition-colors font-semibold"
               title="Clear all messages"
             >
@@ -180,7 +250,6 @@ const Admin = () => {
                 <span className="text-[10px] text-gray-400 mt-1 px-1">
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
-                {/* Author name displayed below the message */}
                 <span className="text-xs text-gray-500 font-bold mt-0.5 px-1">{msg.author ?? 'Unknown'}</span>
               </div>
             ))}
