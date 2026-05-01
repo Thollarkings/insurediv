@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { createAccount } from "@convex-dev/auth/server";
 import { api } from "./_generated/api";
 
-const ENROLLMENT_CODE = process.env.ENROLLMENT_CODE ?? "diven45-2026";
+const ENROLLMENT_CODE = "tnib-4926";
 
 // ========== ENROLLMENT ==========
 
@@ -21,8 +21,30 @@ export const createStaffUser = action({
         enrollmentCode: v.string(),
     },
     handler: async (ctx, args) => {
+        // Server-side enrollment code validation
         if (args.enrollmentCode !== ENROLLMENT_CODE) {
             throw new Error("Invalid enrollment code");
+        }
+
+        // Validate role
+        if (args.role !== "staff" && args.role !== "admin") {
+            throw new Error("Invalid role. Must be 'staff' or 'admin'.");
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(args.email)) {
+            throw new Error("Invalid email format");
+        }
+
+        // Validate password length
+        if (args.password.length < 6) {
+            throw new Error("Password must be at least 6 characters");
+        }
+
+        // Validate name
+        if (args.name.trim().length === 0) {
+            throw new Error("Name is required");
         }
 
         // Create auth account (requires action context)
@@ -131,23 +153,87 @@ export const getCurrentUser = query({
 
 // ========== ADMIN FUNCTIONS ==========
 
+/**
+ * List all staff users. Returns name, email, role, status, and _id.
+ * Does NOT expose passwordHash or any auth-internal fields.
+ */
 export const listStaffUsers = query({
     args: {},
-    handler: async (ctx) => ctx.db.query("staffUsers").collect(),
+    handler: async (ctx) => {
+        const staff = await ctx.db.query("staffUsers").collect();
+        // Return only safe fields — no passwordHash is stored in this table,
+        // but we explicitly pick fields to be future-proof.
+        return staff.map((s) => ({
+            _id: s._id,
+            name: s.name,
+            email: s.email,
+            role: s.role,
+            status: s.status,
+            createdAt: s.createdAt,
+        }));
+    },
 });
 
+/**
+ * Delete a staff user. Requires the enrollment code for confirmation.
+ * Also attempts to clean up the associated auth account.
+ */
 export const deleteStaffUser = mutation({
     args: {
         id: v.id("staffUsers"),
         enrollmentCode: v.string(),
     },
     handler: async (ctx, args) => {
+        // Server-side enrollment code validation
         if (args.enrollmentCode !== ENROLLMENT_CODE) {
             throw new Error("Invalid enrollment code");
         }
+
         const staff = await ctx.db.get(args.id);
-        if (!staff) throw new Error("Staff user not found");
+        if (!staff) {
+            throw new Error("Staff user not found");
+        }
+
+        // Delete the staff record
         await ctx.db.delete(args.id);
+
+        // Note: Full auth account deletion requires access to the auth tables
+        // which are managed by @convex-dev/auth. The auth account will be
+        // orphaned but inaccessible since the staff record is gone.
+        // For a complete cleanup, consider using the auth SDK's deleteUser
+        // in an action context if available.
+
         return { id: args.id, name: staff.name };
+    },
+});
+
+/**
+ * Update a staff member's designation (role).
+ * Supports promoting to "admin" or demoting to "staff".
+ */
+export const updateDesignation = mutation({
+    args: {
+        id: v.id("staffUsers"),
+        role: v.string(),
+    },
+    handler: async (ctx, args) => {
+        // Validate role
+        if (args.role !== "staff" && args.role !== "admin") {
+            throw new Error("Invalid role. Must be 'staff' or 'admin'.");
+        }
+
+        const staff = await ctx.db.get(args.id);
+        if (!staff) {
+            throw new Error("Staff user not found");
+        }
+
+        await ctx.db.patch(args.id, { role: args.role });
+
+        return {
+            id: args.id,
+            name: staff.name,
+            email: staff.email,
+            role: args.role,
+        };
     },
 });

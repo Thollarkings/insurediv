@@ -1,0 +1,64 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "TOP NOTCH INSURANCE BROKERS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+        - generic [ref=e10]: TOP NOTCH INSURANCE BROKERS
+      - generic [ref=e11]:
+        - link "Home" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "About" [ref=e13] [cursor=pointer]:
+          - /url: /about
+        - link "Contact Us" [ref=e14] [cursor=pointer]:
+          - /url: /contact
+        - link "Get a Quote" [ref=e15] [cursor=pointer]:
+          - /url: /contact
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - img "Background" [ref=e19]
+      - generic [ref=e22]:
+        - heading "Security for Your Future Self" [level=1] [ref=e23]:
+          - text: Security for Your
+          - text: Future Self
+        - paragraph [ref=e24]: Top Notch Insurance Brokers provides premium protection for what matters most. Experience integrity, excellence, and peace of mind.
+        - generic [ref=e25]:
+          - button "Explorer Plans" [ref=e26]:
+            - text: Explorer Plans
+            - img [ref=e27]
+          - button "Our Story" [ref=e29]
+    - generic [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Elite Protection Packages" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Tailored coverage designed with your legacy in mind.
+      - generic [ref=e35]:
+        - generic [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - heading "Life Assurance" [level=3] [ref=e40]
+          - paragraph [ref=e41]: Secure your family's legacy with comprehensive coverage.
+          - generic [ref=e42]:
+            - text: Learn More
+            - img [ref=e43]
+        - generic [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+          - heading "Health Elite" [level=3] [ref=e49]
+          - paragraph [ref=e50]: World-class healthcare for you and your loved ones.
+          - generic [ref=e51]:
+            - text: Learn More
+            - img [ref=e52]
+        - generic [ref=e54] [cursor=pointer]:
+          - img [ref=e55]
+          - heading "Estate Shield" [level=3] [ref=e58]
+          - paragraph [ref=e59]: Protect your property against the unexpected.
+          - generic [ref=e60]:
+            - text: Learn More
+            - img [ref=e61]
+        - generic [ref=e63] [cursor=pointer]:
+          - img [ref=e64]
+          - heading "Auto Premium" [level=3] [ref=e68]
+          - paragraph [ref=e69]: Advanced protection for your terrestrial assets.
+          - generic [ref=e70]:
+            - text: Learn More
+            - img [ref=e71]
+  - contentinfo [ref=e73]:
+    - paragraph [ref=e75]: © 2026 Top Notch Insurance Brokers. All rights reserved. Professional Protection for a Better Tomorrow.

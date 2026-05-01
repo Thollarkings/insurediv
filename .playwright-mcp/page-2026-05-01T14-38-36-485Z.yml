@@ -1,0 +1,35 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "TOP NOTCH INSURANCE BROKERS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+        - generic [ref=e10]: TOP NOTCH INSURANCE BROKERS
+      - generic [ref=e11]:
+        - link "Home" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "About" [ref=e13] [cursor=pointer]:
+          - /url: /about
+        - link "Contact Us" [ref=e14] [cursor=pointer]:
+          - /url: /contact
+        - link "Get a Quote" [ref=e15] [cursor=pointer]:
+          - /url: /contact
+  - generic [ref=e17]:
+    - generic [ref=e18]:
+      - img [ref=e20]
+      - heading "Staff Enrollment Portal" [level=1] [ref=e23]
+      - paragraph [ref=e24]: Secure access for Top Notch Insurance Brokers administrators
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - img [ref=e28]
+        - heading "Enter Enrollment Code" [level=2] [ref=e32]
+        - paragraph [ref=e33]: Only authorized administrators can manage staff accounts
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: Enrollment Code
+          - textbox "Enter code" [active] [ref=e37]
+        - button "Verify Code" [ref=e38]:
+          - img [ref=e39]
+          - text: Verify Code
+  - contentinfo [ref=e42]:
+    - paragraph [ref=e44]: © 2026 Top Notch Insurance Brokers. All rights reserved. Professional Protection for a Better Tomorrow.

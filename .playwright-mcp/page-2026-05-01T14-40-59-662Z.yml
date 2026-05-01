@@ -1,0 +1,130 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "TOP NOTCH INSURANCE BROKERS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+        - generic [ref=e10]: TOP NOTCH INSURANCE BROKERS
+      - generic [ref=e11]:
+        - link "Home" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "About" [ref=e13] [cursor=pointer]:
+          - /url: /about
+        - link "Contact Us" [ref=e14] [cursor=pointer]:
+          - /url: /contact
+        - link "Get a Quote" [ref=e15] [cursor=pointer]:
+          - /url: /contact
+  - generic [ref=e16]:
+    - generic [ref=e154]:
+      - img [ref=e155]
+      - paragraph [ref=e158]: Staff account for Test User created successfully!
+      - button [ref=e159]:
+        - img [ref=e160]
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - img [ref=e20]
+        - heading "Staff Management Dashboard" [level=1] [ref=e25]
+        - paragraph [ref=e26]: Create, manage, and control staff access to the Top Notch Insurance Brokers admin portal
+      - generic [ref=e27]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - img [ref=e32]
+            - generic [ref=e35]:
+              - heading "Create Staff Account" [level=2] [ref=e36]
+              - paragraph [ref=e37]: Add new staff members to the system
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: Full Name *
+              - generic [ref=e41]:
+                - img [ref=e42]
+                - textbox "John Doe" [ref=e45]
+            - generic [ref=e46]:
+              - generic [ref=e47]: Email Address *
+              - generic [ref=e48]:
+                - img [ref=e49]
+                - textbox "john@topnotchib.com" [ref=e52]
+            - generic [ref=e53]:
+              - generic [ref=e54]: Password *
+              - generic [ref=e55]:
+                - img [ref=e56]
+                - textbox "Minimum 6 characters" [ref=e59]
+            - generic [ref=e60]:
+              - generic [ref=e61]: Designation *
+              - combobox [ref=e62]:
+                - option "Staff" [selected]
+                - option "Admin"
+            - button "Create Staff Account" [ref=e63]:
+              - img [ref=e163]
+              - text: Create Staff Account
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - img [ref=e72]
+              - heading "Current Staff Members" [level=2] [ref=e77]
+            - generic [ref=e78]: 4 total
+          - table [ref=e80]:
+            - rowgroup [ref=e81]:
+              - row "Name Email Designation Actions" [ref=e82]:
+                - columnheader "Name" [ref=e83]
+                - columnheader "Email" [ref=e84]
+                - columnheader "Designation" [ref=e85]
+                - columnheader "Actions" [ref=e86]
+            - rowgroup [ref=e87]:
+              - row "Maxtreme med@gmail.com staff" [ref=e88]:
+                - cell "Maxtreme" [ref=e89]:
+                  - generic [ref=e90]:
+                    - img [ref=e92]
+                    - generic [ref=e95]: Maxtreme
+                - cell "med@gmail.com" [ref=e96]
+                - cell "staff" [ref=e97]:
+                  - generic [ref=e98]: staff
+                - cell [ref=e99]:
+                  - generic [ref=e100]:
+                    - button "Promote to Admin" [ref=e101]:
+                      - img [ref=e102]
+                    - button "Delete staff member" [ref=e105]:
+                      - img [ref=e106]
+              - row "Omotola max@gmail.com staff" [ref=e109]:
+                - cell "Omotola" [ref=e110]:
+                  - generic [ref=e111]:
+                    - img [ref=e113]
+                    - generic [ref=e116]: Omotola
+                - cell "max@gmail.com" [ref=e117]
+                - cell "staff" [ref=e118]:
+                  - generic [ref=e119]: staff
+                - cell [ref=e120]:
+                  - generic [ref=e121]:
+                    - button "Promote to Admin" [ref=e122]:
+                      - img [ref=e123]
+                    - button "Delete staff member" [ref=e126]:
+                      - img [ref=e127]
+              - row "Quantity enrol@divineinsure.com admin" [ref=e130]:
+                - cell "Quantity" [ref=e131]:
+                  - generic [ref=e132]:
+                    - img [ref=e134]
+                    - generic [ref=e137]: Quantity
+                - cell "enrol@divineinsure.com" [ref=e138]
+                - cell "admin" [ref=e139]:
+                  - generic [ref=e140]: admin
+                - cell [ref=e141]:
+                  - generic [ref=e142]:
+                    - button "Demote to Staff" [ref=e143]:
+                      - img [ref=e144]
+                    - button "Delete staff member" [ref=e147]:
+                      - img [ref=e148]
+              - row "Test User test1@example.com staff" [ref=e166]:
+                - cell "Test User" [ref=e167]:
+                  - generic [ref=e168]:
+                    - img [ref=e170]
+                    - generic [ref=e173]: Test User
+                - cell "test1@example.com" [ref=e174]
+                - cell "staff" [ref=e175]:
+                  - generic [ref=e176]: staff
+                - cell [ref=e177]:
+                  - generic [ref=e178]:
+                    - button "Promote to Admin" [ref=e179]:
+                      - img [ref=e180]
+                    - button "Delete staff member" [ref=e183]:
+                      - img [ref=e184]
+  - contentinfo [ref=e151]:
+    - paragraph [ref=e153]: © 2026 Top Notch Insurance Brokers. All rights reserved. Professional Protection for a Better Tomorrow.

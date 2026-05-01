@@ -12,11 +12,13 @@ export default defineSchema({
         createdAt: v.number(),
         authUserId: v.optional(v.string()),
     }).index("by_email", ["email"])
-      .index("by_auth_user_id", ["authUserId"]),
+        .index("by_auth_user_id", ["authUserId"]),
     messages: defineTable({
         body: v.string(),
-        author: v.string(),
+        authorName: v.optional(v.string()),
         authorEmail: v.optional(v.string()),
+        edited: v.optional(v.boolean()),
+        pinned: v.optional(v.boolean()),
         timestamp: v.number(),
     }),
     inquiries: defineTable({
