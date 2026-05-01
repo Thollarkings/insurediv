@@ -1,0 +1,18 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "TOP NOTCH INSURANCE BROKERS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+        - generic [ref=e10]: TOP NOTCH INSURANCE BROKERS
+      - generic [ref=e11]:
+        - link "Home" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "About" [ref=e13] [cursor=pointer]:
+          - /url: /about
+        - link "Contact Us" [ref=e14] [cursor=pointer]:
+          - /url: /contact
+        - link "Get a Quote" [ref=e15] [cursor=pointer]:
+          - /url: /contact
+  - contentinfo [ref=e16]:
+    - paragraph [ref=e18]: © 2026 Top Notch Insurance Brokers. All rights reserved. Professional Protection for a Better Tomorrow.

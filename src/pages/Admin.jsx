@@ -1,10 +1,101 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'convex/react';
+import { useAuthActions } from '@convex-dev/auth/react';
 import { api } from '../../convex/_generated/api';
-import { ConvexAuthProvider } from '@convex-dev/auth/react';
-import { LogOut, ShieldCheck, User, X } from 'lucide-react';
+import { LogOut, ShieldCheck, User } from 'lucide-react';
 import ChatMessage from '../components/chat/ChatMessage';
 import ChatInput from '../components/chat/ChatInput';
+
+// =============================================================================
+// LoginForm Component
+// =============================================================================
+
+function LoginForm({ signIn }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await signIn('password', { email, password, flow: 'signIn' });
+    } catch (err) {
+      setError(err?.message || 'Invalid email or password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pt-24 pb-12 flex items-center justify-center">
+      <div className="max-w-md w-full mx-auto px-4">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#002147] rounded-3xl mb-6">
+            <ShieldCheck className="w-10 h-10 text-[#D4AF37]" />
+          </div>
+          <h1 className="text-4xl font-bold text-[#002147] mb-4">Staff Login</h1>
+          <p className="text-xl text-gray-600">Sign in to access the admin portal</p>
+        </div>
+
+        <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#002147]/10 rounded-2xl mb-4">
+              <User className="w-7 h-7 text-[#002147]" />
+            </div>
+            <h2 className="text-2xl font-bold text-[#002147] mb-2">Sign In</h2>
+            <p className="text-gray-500">Use your staff credentials to continue</p>
+          </div>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+              <span className="text-red-700 text-sm">{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="text-sm font-bold text-[#002147] mb-2 block">Email Address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                placeholder="you@topnotchib.com"
+                className="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl focus:ring-2 focus:ring-[#002147] outline-none"
+                required
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="text-sm font-bold text-[#002147] mb-2 block">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                placeholder="Enter your password"
+                className="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl focus:ring-2 focus:ring-[#002147] outline-none"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#002147] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#D4AF37] hover:text-[#002147] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// Admin Page Component
+// =============================================================================
 
 const Admin = () => {
   // Convex hooks
@@ -13,26 +104,14 @@ const Admin = () => {
   const deleteMessage = useMutation(api.messages.deleteMessage);
   const editMessage = useMutation(api.messages.editMessage);
   const pinMessage = useMutation(api.messages.pinMessage);
+  const currentUser = useQuery(api.staff.getCurrentUser);
+  const { signIn, signOut } = useAuthActions();
 
   // Local state
   const [newMessage, setNewMessage] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const messagesEndRef = useRef(null);
 
-  // Check if user is admin on mount
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      try {
-        const user = await api.staff.getCurrentUser();
-        setCurrentUser(user);
-        setIsAdmin(user?.role === 'admin');
-      } catch (err) {
-        console.error('Failed to fetch user:', err);
-      }
-    };
-    checkAdminStatus();
-  }, []);
+  const isAdmin = currentUser?.role === 'admin';
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -76,9 +155,14 @@ const Admin = () => {
     }
   };
 
-  // If not authenticated, redirect to login (handled by ConvexAuthProvider)
+  // If loading currentUser, show nothing
+  if (currentUser === undefined) {
+    return null;
+  }
+
+  // If not authenticated, show login UI with email/password form
   if (!currentUser) {
-    return null; // ConvexAuthProvider will show the login UI
+    return <LoginForm signIn={signIn} />;
   }
 
   return (
@@ -94,7 +178,7 @@ const Admin = () => {
             </p>
           </div>
           <button
-            onClick={() => api.auth.signOut()}
+            onClick={() => signOut()}
             className="flex items-center gap-2 text-[#002147] font-bold hover:text-[#D4AF37] transition-colors"
           >
             <LogOut className="w-4 h-4" /> Logout

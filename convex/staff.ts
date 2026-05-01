@@ -63,6 +63,7 @@ export const createStaffUser = action({
     },
 });
 
+
 export const createStaffRecord = mutation({
     args: {
         name: v.string(),
@@ -116,36 +117,38 @@ export const getCurrentUser = query({
             name: identity.name,
         });
 
-        // Convex Auth password provider uses email as account ID (subject)
-        // identity.email may not be populated, so use subject as fallback
-        const email = (identity.email || identity.subject || "").toString();
+        // For the Password provider, the account ID is the email
+        // Look up the authAccounts table to find the email for this user
+        const userId = identity.subject.split("|")[0];
 
-        if (!email) {
-            console.log("getCurrentUser: No email found in identity");
-            return { email: "", name: "Unknown", role: "unknown" };
+        // Find the auth account record to get the email
+        const authAccounts = await ctx.db.query("authAccounts").collect();
+        const authAccount = authAccounts.find((a: any) => a.userId === userId);
+        const email = authAccount?.providerAccountId || identity.email || "";
+
+        console.log("getCurrentUser: found authAccount for userId", userId, "email:", email);
+
+        // Look up staff by email
+        if (email) {
+            const staff = await ctx.db
+                .query("staffUsers")
+                .withIndex("by_email", (q: any) => q.eq("email", email))
+                .first();
+
+            if (staff) {
+                return {
+                    email: staff.email,
+                    name: staff.name,
+                    role: staff.role,
+                };
+            }
         }
 
-        // Look up staff by email (primary identifier)
-        const staff = await ctx.db
-            .query("staffUsers")
-            .withIndex("by_email", (q: any) => q.eq("email", email))
-            .first();
-
-        console.log("getCurrentUser: Staff lookup by email", email, "found:", !!staff);
-
-        if (staff) {
-            return {
-                email: staff.email,
-                name: staff.name,
-                role: staff.role,
-            };
-        }
-
-        // Fallback: use identity name or email prefix
-        console.log("getCurrentUser: No staff found, using fallback");
+        // Final fallback: use identity name
+        console.log("getCurrentUser: No staff found, using identity fallback");
         return {
-            email,
-            name: identity.name || email.split('@')[0] || "Unknown",
+            email: email || "",
+            name: identity.name || "Staff",
             role: "unknown",
         };
     },
