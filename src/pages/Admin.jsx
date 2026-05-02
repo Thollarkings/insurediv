@@ -116,8 +116,8 @@ const Admin = () => {
 
   const isAdmin = currentUser?.role === 'admin';
 
-  // Messages are returned oldest-first from the query, flex-col-reverse flips to newest-at-bottom
-  const messagesForDisplay = messages;
+   // Messages are returned oldest-first from the query, flex-col shows oldest-at-top
+   const messagesForDisplay = messages;
 
   // Scroll to bottom with smooth behavior for new messages
   const scrollToBottom = useCallback((behavior = 'smooth') => {
@@ -239,11 +239,11 @@ const Admin = () => {
             </span>
           </div>
 
-          {/* Messages - newest at bottom, oldest at top */}
-          <div
-            ref={messagesContainerRef}
-            className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 flex flex-col-reverse"
-          >
+           {/* Messages - oldest at top, newest at bottom */}
+           <div
+             ref={messagesContainerRef}
+             className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 flex flex-col"
+           >
             {messages.length === 0 && (
               <div className="text-center text-gray-400 mt-20">
                 No messages yet. Start the conversation!
