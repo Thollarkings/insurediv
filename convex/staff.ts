@@ -20,7 +20,7 @@ export const createStaffUser = action({
         role: v.string(),
         enrollmentCode: v.string(),
     },
-    handler: async (ctx, args) => {
+    handler: async (ctx, args): Promise<{ id: string; name: string; email: string; role: string } | null> => {
         // Server-side enrollment code validation
         if (args.enrollmentCode !== ENROLLMENT_CODE) {
             throw new Error("Invalid enrollment code");
@@ -70,7 +70,7 @@ export const createStaffRecord = mutation({
         email: v.string(),
         role: v.string(),
     },
-    handler: async (ctx, args) => {
+    handler: async (ctx, args): Promise<{ id: string; name: string; email: string; role: string; status: string; createdAt: number }> => {
         // Check if staff already exists
         const existing = await ctx.db
             .query("staffUsers")
@@ -84,7 +84,7 @@ export const createStaffRecord = mutation({
                 role: args.role,
                 status: "active",
             });
-            return { id: existing._id, name: args.name, email: args.email, role: args.role };
+            return { id: existing._id, name: args.name, email: args.email, role: args.role, status: "active", createdAt: existing.createdAt };
         }
 
         const staffId = await ctx.db.insert("staffUsers", {
@@ -95,7 +95,7 @@ export const createStaffRecord = mutation({
             createdAt: Date.now(),
         });
 
-        return { id: staffId, name: args.name, email: args.email, role: args.role };
+        return { id: staffId, name: args.name, email: args.email, role: args.role, status: "active", createdAt: Date.now() };
     },
 });
 

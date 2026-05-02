@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { api } from '../../convex/_generated/api';
@@ -110,13 +110,58 @@ const Admin = () => {
   // Local state
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const isInitialMount = useRef(true);
+  const previousMessageCount = useRef(0);
 
   const isAdmin = currentUser?.role === 'admin';
 
-  // Scroll to bottom when new messages arrive
+  // Messages are returned oldest-first from the query, flex-col-reverse flips to newest-at-bottom
+  const messagesForDisplay = messages;
+
+  // Scroll to bottom with smooth behavior for new messages
+  const scrollToBottom = useCallback((behavior = 'smooth') => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior, block: 'end' });
+    }
+  }, []);
+
+  // Handle new messages (auto-scroll only if user is near bottom)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      // On initial load, scroll to bottom immediately
+      setTimeout(() => scrollToBottom('auto'), 50);
+      return;
+    }
+
+    // Only auto-scroll if new message was added (not deleted/edited)
+    if (messages.length > previousMessageCount.current) {
+      scrollToBottom('smooth');
+    }
+    previousMessageCount.current = messages.length;
+  }, [messages.length, scrollToBottom]);
+
+  // Handle resize: maintain scroll position relative to bottom
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Keep bottom alignment stable during resize
+        scrollToBottom('auto');
+      }, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, [scrollToBottom]);
 
   const handleSend = async (body) => {
     try {
@@ -173,8 +218,7 @@ const Admin = () => {
             <h1 className="text-4xl font-bold text-[#002147]">Behind the Scenes</h1>
             <p className="text-gray-500">
               Signed in as <strong>{currentUser?.name}</strong> (
-              {currentUser?.role === 'admin' ? 'Admin' : 'Staff'}
-              )
+              {currentUser?.role === 'admin' ? 'Admin' : 'Staff'})
             </p>
           </div>
           <button
@@ -195,14 +239,17 @@ const Admin = () => {
             </span>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50">
+          {/* Messages - newest at bottom, oldest at top */}
+          <div
+            ref={messagesContainerRef}
+            className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 flex flex-col-reverse"
+          >
             {messages.length === 0 && (
               <div className="text-center text-gray-400 mt-20">
                 No messages yet. Start the conversation!
               </div>
             )}
-            {messages.map((msg) => (
+            {messagesForDisplay.map((msg) => (
               <ChatMessage
                 key={msg._id}
                 message={msg}
@@ -213,7 +260,7 @@ const Admin = () => {
                 onPin={handlePin}
               />
             ))}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} className="h-0 flex-shrink-0" />
           </div>
 
           {/* Input */}
